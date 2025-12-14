@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Earth Engine Dashboard</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- Leaflet & Draw (map + drawing tools) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css"/>
+  <script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script defer src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+
+  <!-- Chart.js -->
+  <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1"></script>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Google Identity Services (optional sign-in) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <i class="fa-solid fa-globe"></i>
+      <div>
+        <div>Earth Engine Dashboard</div>
+      </div>
+    </div>
+    <div class="auth">
+      <span class="badge" id="authBadge">Not Authenticated</span>
+      <button id="signInBtn" class="btn btn-white"><i class="fa-solid fa-user"></i> Sign In</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Controls -->
+    <aside class="panel">
+      <div class="card">
+        <div class="card-title"><i class="fa-solid fa-sliders"></i> Controls</div>
+        <div class="section">
+          <label>Select Dataset</label>
+          <select id="dataset">
+            <option value="S2">Sentinel‑2 (Surface Reflectance)</option>
+            <option value="L8">Landsat 8 (Surface Reflectance)</option>
+          </select>
+          <div class="row">
+            <div>
+              <label>Start Date</label>
+              <input type="date" id="start" value="2025-10-01"/>
+            </div>
+            <div>
+              <label>End Date</label>
+              <input type="date" id="end" value="2025-12-01"/>
+            </div>
+          </div>
+          <label>Visualization</label>
+          <select id="viz">
+            <option value="truecolor">True Color (RGB)</option>
+            <option value="ndvi">NDVI</option>
+            <option value="ci_green">Chlorophyll Index (CI‑green)</option>
+            <option value="ci_rededge">Chlorophyll Index (CI‑rededge)</option>
+          </select>
+          <div class="row">
+            <button class="btn btn-green" id="loadBtn"><i class="fa-solid fa-download"></i> Load Data</button>
+            <button class="btn btn-blue" id="addLayerBtn"><i class="fa-solid fa-plus"></i> Add Layer</button>
+          </div>
+          <div class="row">
+            <button class="btn btn-red" id="clearBtn"><i class="fa-solid fa-broom"></i> Clear Layers</button>
+            <button class="btn btn-outline" id="exportBtn"><i class="fa-solid fa-file-export"></i> Export Image</button>
+          </div>
+          <div class="status" id="statusMsg">Status: Idle</div>
+        </div>
+
+        <div class="section">
+          <div class="card-title"><i class="fa-solid fa-flask"></i> Analysis Tools</div>
+          <button class="btn btn-amber" id="calcNdviBtn">Calculate NDVI</button>
+          <button class="btn btn-amber" id="tsBtn">Time Series</button>
+          <button class="btn btn-amber" id="statsBtn">Get Statistics</button>
+          <div class="muted">Draw an AOI on the map first.</div>
+        </div>
+
+        <div class="section">
+          <div class="card-title"><i class="fa-solid fa-layer-group"></i> Active Layers</div>
+          <div id="layersList"></div>
+        </div>
+
+        <div class="section">
+          <div class="card-title"><i class="fa-solid fa-water"></i> Chlorophyll Monitor</div>
+          <div class="legend" id="chlLegend"></div>
+          <div class="muted">CI palette aligned with backend defaults.</div>
+        </div>
+      </div>
+      <div class="footer-tip">
+        Tip: Host on GitHub Pages. Set <code>API_BASE</code> in <code>config.js</code> to your Cloud Run backend.
+      </div>
+    </aside>
+
+    <!-- Map + Information panel -->
+    <main>
+      <div class="card">
+        <div class="card-title"><span class="pill"><i class="fa-solid fa-map"></i> Interactive Map</span></div>
+        <div id="map"></div>
+      </div>
+
+      <div class="card info-panel">
+        <div class="card-title"><i class="fa-solid fa-circle-info"></i> Information Panel</div>
+        <div id="infoBox">Select an area or click on the map to get information.</div>
+        <canvas id="chart" style="max-height:240px;margin-top:10px"></canvas>
+      </div>
+    </main>
+  </div>
+
+  <!-- Config + App scripts -->
+  <script defer src="config.js"></script>
+  <script defer src="script.js"></script>
+</body>
+</html>
